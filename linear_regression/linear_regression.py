@@ -2,19 +2,19 @@ import numpy as np
 
 class LinearRegression:
     def correct_estimators(self, learning_rate, samples):
-       estimates = self.independent_variables.dot(self.estimators)
-       error = estimates - self.dependent_variable
-       gradient = self.independent_variables.T.dot(error)
-       self.estimators -= learning_rate/samples * gradient
+        estimates = self.independent_variables.dot(self.estimators)
+        error = estimates - self.dependent_variable
+        gradient = self.independent_variables.T.dot(error)
+        self.estimators -= learning_rate/samples * gradient
  
     def gradient_descent(self):
-       learning_rate = .01
-       samples =  self.independent_variables.shape[0]       
-       for iteration in xrange(3000):
-          self.correct_estimators(learning_rate, samples)
+        learning_rate = .01
+        samples =  self.independent_variables.shape[0]       
+        for iteration in xrange(3000):
+            self.correct_estimators(learning_rate, samples)
 
     def feature_normalization(self, features):
-       return (features - self.means)/self.deviations
+        return (features - self.means)/self.deviations
  
     def __init__(self, dataset):
         independent_variables = dataset[:,:-1] 
@@ -24,6 +24,6 @@ class LinearRegression:
         self.estimators = np.zeros((self.independent_variables.shape[1],1))
         self.gradient_descent() 
     
-    def predict(features):
-        normalized = feature_normalization(features)
-        return self.estimators.dot(np.insert(normalized, 1))
+    def predict(self,features):
+        normalized = self.feature_normalization(features)
+        return np.insert(features, 0, 1).dot(self.estimators)
