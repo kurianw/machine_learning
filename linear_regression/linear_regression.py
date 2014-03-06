@@ -26,4 +26,4 @@ class LinearRegression:
     
     def predict(self,features):
         normalized = self.feature_normalization(features)
-        return np.insert(features, 0, 1).dot(self.estimators)
+        return np.insert(normalized, 0, 1).dot(self.estimators)[0]
