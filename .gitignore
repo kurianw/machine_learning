@@ -1,2 +1,5 @@
 # Ignore compiled python bytecode
 *.pyc
+
+# Ignore swap files
+*.swp
