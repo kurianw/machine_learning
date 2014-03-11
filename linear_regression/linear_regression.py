@@ -1,29 +1,23 @@
 import numpy as np
+from gradient_descent import gradient_descent
 
 class LinearRegression:
-    def correct_estimators(self, learning_rate, samples):
-        estimates = self.independent_variables.dot(self.estimators)
-        error = estimates - self.dependent_variable
-        gradient = self.independent_variables.T.dot(error)
-        self.estimators -= learning_rate/samples * gradient
- 
-    def gradient_descent(self):
-        learning_rate = .01
-        samples =  self.independent_variables.shape[0]       
-        for iteration in xrange(3000):
-            self.correct_estimators(learning_rate, samples)
+    def gradient(self, theta, X, y, m):
+        estimates = X.dot(theta)
+        error = estimates - y 
+        return 1.0/m * X.T.dot(error)
 
-    def feature_normalization(self, features):
-        return (features - self.means)/self.deviations
- 
+    def cost_function(self, theta, X, y, m):
+        estimates = X.dot(theta)
+        error = estimats - y
+        return 1.0/(2*m)*error.T.dot(error)
+
     def __init__(self, dataset):
         independent_variables = dataset[:,:-1] 
-        self.deviations, self.means = np.std(independent_variables, axis = 0), np.mean(independent_variables, axis = 0)
-        self.independent_variables = np.insert(self.feature_normalization(independent_variables), 0, 1, axis = 1)
+        self.independent_variables = np.insert(independent_variables, 0, 1, axis = 1)
         self.dependent_variable= dataset[:,-1][np.newaxis].T
-        self.estimators = np.zeros((self.independent_variables.shape[1],1))
-        self.gradient_descent() 
+        estimators = np.zeros((self.independent_variables.shape[1],1))
+        self.estimators = gradient_descent(self.gradient, estimators, args = (self.independent_variables, self.dependent_variable, self.independent_variables.shape[0])) 
     
     def predict(self,features):
-        normalized = self.feature_normalization(features)
-        return np.insert(normalized, 0, 1).dot(self.estimators)[0]
+        return np.insert(features, 0, 1).dot(self.estimators)[0]
