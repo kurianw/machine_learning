@@ -1,23 +1,27 @@
 import numpy as np
-from gradient_descent import gradient_descent
+import tensorflow as tf
 
-class LinearRegression:
-    def gradient(self, theta, X, y, m):
-        estimates = X.dot(theta)
-        error = estimates - y 
-        return 1.0/m * X.T.dot(error)
+def fill_feed_dict(features, weights, feature_values, weight_values):
+  rows = len(feature_values)
+  feed_dict= {
+      features: np.reshape(feature_values, (rows, 1)),
+      weights: np.reshape(weight_values, (1, 1))
+  }
+  return feed_dict
 
-    def cost_function(self, theta, X, y, m):
-        estimates = X.dot(theta)
-        error = estimats - y
-        return 1.0/(2*m)*error.T.dot(error)
+def predict_op(feature_values, weight_values):
+  features = tf.placeholder(tf.float32, shape=[None,1])
+  weights = tf.placeholder(tf.float32, shape=[1, None])
+  return tf.matmul(features, weights)
 
-    def __init__(self, dataset):
-        independent_variables = dataset[:,:-1] 
-        self.independent_variables = np.insert(independent_variables, 0, 1, axis = 1)
-        self.dependent_variable= dataset[:,-1][np.newaxis].T
-        estimators = np.zeros((self.independent_variables.shape[1],1))
-        self.estimators = gradient_descent(self.gradient, estimators, args = (self.independent_variables, self.dependent_variable, self.independent_variables.shape[0])) 
-    
-    def predict(self,features):
-        return np.insert(features, 0, 1).dot(self.estimators)[0]
+def predict(feature_values, weight_values):
+  feed_dict= fill_feed_dict(features, weights, feature_values, weight_values)
+  sess = tf.Session()
+  return sess.run(predict_op, feed_dict = feed_dict)
+
+def error(feature_values, weight_values, actual_values):
+  expected = tf.placeholder(tf.float32, shape=[None,1])  
+  difference = expected - predict_op(feature_values, weight_values)
+  return tf.reduce_sum(tf.square(difference))
+  
+  
